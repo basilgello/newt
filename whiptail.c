@@ -65,6 +65,7 @@ static void usage(int err) {
 	       "\t--backtitle <backtitle>		display backtitle\n"
 	       "\t--scrolltext			force vertical scrollbars\n"
 	       "\t--topleft			put window in top-left corner\n"
+               "\t--itemspacechar <char>	replace char in item desc with spacebar\n"
 	       "\t-h, --help			print this message\n"
 	       "\t-v, --version			print version information\n\n"));
     exit(err ? DLG_ERROR : 0 );
@@ -356,6 +357,7 @@ int main(int argc, const char ** argv) {
     char * no_button = NULL;
     char * ok_button = NULL;
     char * cancel_button = NULL;
+    char * itemspacechar = NULL;
     int help = 0, version = 0;
     struct poptOption optionsTable[] = {
 	    { "backtitle", '\0', POPT_ARG_STRING, &backtitle, 0 },
@@ -386,6 +388,7 @@ int main(int argc, const char ** argv) {
 	    { "no-button", '\0', POPT_ARG_STRING, &no_button, 0},
 	    { "ok-button", '\0', POPT_ARG_STRING, &ok_button, 0},
 	    { "cancel-button", '\0', POPT_ARG_STRING, &cancel_button, 0},
+	    { "itemspacechar", '\0', POPT_ARG_STRING, &itemspacechar, 0 },
 	    { "help", 'h', 0,  &help, 0, NULL, NULL },
 	    { "version", 'v', 0, &version, 0, NULL, NULL },
 	    { 0, 0, 0, 0, 0 } 
@@ -575,7 +578,8 @@ int main(int argc, const char ** argv) {
 	break;
 
       case MODE_MENU:
-	rc = listBox(text, height, width, optCon, flags, default_item, &result);
+	rc = listBox(text, height, width, optCon, flags, itemspacechar,
+              default_item, &result);
 	if (rc == DLG_OKAY) {
 	    fprintf(output, "%s", result);
 	    free(result);
@@ -583,7 +587,8 @@ int main(int argc, const char ** argv) {
 	break;
 
       case MODE_RADIOLIST:
-	rc = checkList(text, height, width, optCon, 1, flags, &selections);
+	rc = checkList(text, height, width, optCon, 1, flags,
+              itemspacechar, &selections);
 	if (rc == DLG_OKAY && selections[0]) {
 	    fprintf(output, "%s", selections[0]);
 	    free(selections[0]);
@@ -592,7 +597,8 @@ int main(int argc, const char ** argv) {
 	break;
 
       case MODE_CHECKLIST:
-	rc = checkList(text, height, width, optCon, 0, flags, &selections);
+	rc = checkList(text, height, width, optCon, 0, flags,
+                       itemspacechar, &selections);
 
 	if (!rc) {
 	    for (next = selections; *next; next++) {

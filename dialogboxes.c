@@ -74,6 +74,18 @@ static void addButtons(int height, int width, newtComponent form,
     }
 }
 
+static void restoreSpaces (char *text, char itemspacechar)
+{
+    char *p, *q;
+
+    for (p = q = text; *p; p++, q++)
+        if (*p == itemspacechar) {
+            *q = ' ';
+        } else
+            *q = *p;
+    *q = '\0';
+}
+
 static void cleanNewlines(char *text)
 {
     char *p, *q;
@@ -255,7 +267,8 @@ static int mystrncpyw(char *dest, const char *src, int n, int *maxwidth)
 }
 
 int listBox(const char * text, int height, int width, poptContext optCon,
-		int flags, const char *default_item, char ** result) {
+		int flags, char * itemspacechar, const char *default_item,
+                char ** result) {
     newtComponent form = NULL, okay, tb, answer, listBox;
     newtComponent cancel = NULL;
     const char * arg;
@@ -302,7 +315,14 @@ int listBox(const char * text, int height, int width, poptContext optCon,
 	    goto error;
 
 	if (!(flags & FLAG_NOITEM)) {
-	    itemInfo[numItems].text = arg;
+	    if (itemspacechar) {
+		 char *edtext = strdup(arg);
+		restoreSpaces(edtext, itemspacechar[0]);
+		itemInfo[numItems].text = edtext;
+	    }
+            else
+		itemInfo[numItems].text = arg;
+
 	} else
 	    itemInfo[numItems].text = "";
 
@@ -406,7 +426,8 @@ error:
 }
 
 int checkList(const char * text, int height, int width, poptContext optCon,
-		int useRadio, int flags, char *** selections) {
+		int useRadio, int flags, char * itemspacechar,
+                char *** selections) {
     newtComponent form = NULL, okay, tb, subform, answer;
     newtComponent sb = NULL, cancel = NULL;
     const char * arg;
@@ -456,7 +477,14 @@ int checkList(const char * text, int height, int width, poptContext optCon,
 	    goto error;
 
 	if (!(flags & FLAG_NOITEM)) {
-	    cbInfo[numBoxes].text = arg;
+	    if (itemspacechar) {
+		 char *edtext = strdup(arg);
+		restoreSpaces(edtext, itemspacechar[0]);
+		cbInfo[numBoxes].text = edtext;
+	    }
+            else
+		cbInfo[numBoxes].text = arg;
+
 	    if (!(arg = poptGetArg(optCon)))
 		goto error;
 	} else

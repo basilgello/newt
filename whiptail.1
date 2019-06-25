@@ -57,6 +57,10 @@ whiptail \- display dialog boxes from shell scripts
 .B \-\-scrolltext
 ]
 [
+.B \-\-spacechar
+.I spacechar
+]
+[
 .B \-\-topleft
 ]
 .B box-options
@@ -141,6 +145,13 @@ Specifies a
 .I backtitle
 string to be displayed on the backdrop, at the top of the screen.
 .TP
+
+.TP
+.BI \-\-spacechar " spacechar"
+Specifies a
+.I spacechar
+character to be replaced by spacebar in the text. Useful to fight
+shell parameter escaping
 .BI \-\-scrolltext
 Force the display of a vertical scrollbar.
 .TP
